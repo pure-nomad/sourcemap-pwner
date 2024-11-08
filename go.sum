@@ -1,2 +1,8 @@
+github.com/MathieuTurcotte/sourcemap v0.0.0-20130811190905-74cf380b45c1 h1:kXLv68mdg/0S7WSJnDgbZqocTCBN400XEPQL5J2zhWs=
+github.com/MathieuTurcotte/sourcemap v0.0.0-20130811190905-74cf380b45c1/go.mod h1:0r1H9hZCEemUuCnZUIQ09aqURRwGVol5tWxbxVQmWvk=
+github.com/robertkrimen/otto v0.5.1 h1:avDI4ToRk8k1hppLdYFTuuzND41n37vPGJU7547dGf0=
+github.com/robertkrimen/otto v0.5.1/go.mod h1:bS433I4Q9p+E5pZLu7r17vP6FkE6/wLxBdmKjoqJXF8=
 golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
 golang.org/x/net v0.30.0/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
+gopkg.in/sourcemap.v1 v1.0.5 h1:inv58fC9f9J3TK2Y2R1NPntXEn3/wjWHkonhIUODNTI=
+gopkg.in/sourcemap.v1 v1.0.5/go.mod h1:2RlvNNSMglmRrcvhfuzp4hQHwOtjxlbjX7UPY/GXb78=

@@ -3,7 +3,9 @@ package internals
 import (
 	"crypto/tls"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"sourcemap-pwner/internals/utils"
 	"strings"
 	"sync"
@@ -11,6 +13,10 @@ import (
 	// "log"
 	"golang.org/x/net/html"
 )
+
+
+// TODO: basic auth support in urls.txt
+
 
 func CheckUrl(url string, ch chan utils.SourceMap, wg *sync.WaitGroup) {
 
@@ -34,22 +40,31 @@ func CheckUrl(url string, ch chan utils.SourceMap, wg *sync.WaitGroup) {
 	resp, err := client.Get(url)
 
 	if err != nil {
-		panic(err)
+		log.Printf("Couldn't make GET request to %q. Error: %v.\n", url, err)
+		os.Exit(0)
+	}
+
+	// 403 check to prevent empty structs being returned
+
+	if resp.StatusCode == 403 {
+		return
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		log.Printf("Couldn't read the body of: %q. Error: %v\n", url, err)
+		os.Exit(0)
 	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-
+			panic(err)
 		}
 	}(resp.Body)
 
-	var once sync.Once
 	var valid utils.SourceMap
+	var once sync.Once
 
 	// so to find js files we will just parse the html and look for javascript file references. ex: <script src="/main.js"/>
 
@@ -57,7 +72,8 @@ func CheckUrl(url string, ch chan utils.SourceMap, wg *sync.WaitGroup) {
 
 	doc, err := html.Parse(r)
 	if err != nil {
-		panic(err)
+		log.Printf("Couldn't read the body of: %q. Error: %v.",url,err)
+		os.Exit(0)
 	}
 
 	var f func(*html.Node)
@@ -84,6 +100,17 @@ func CheckUrl(url string, ch chan utils.SourceMap, wg *sync.WaitGroup) {
 	f(doc)
 
 	valid.CheckJsFileHostname()
+
+	check := valid.CheckSourcemap()
+
+	if check == true {
+		log.Printf("Found sourcemap! %q",url)
+		log.Println("Parsing...")
+		valid.ParseSourcemap()
+	} else {
+		return
+	}
+
 	/* this call makes sure we only get one sourcemap struct back on the channel that has ALL the js files found :)
 	AND NOW THEY ARE CLEANED READY FOR REQUESTS TO BE MADE! (CheckJsFileHostname) ... but I know I will have to parse the body of this as well to find sourceMappingURL=
 	*/
